@@ -16,8 +16,12 @@ datasource db {
     referentialIntegrity = "prisma"
 }
 
-model Example {
+model Link {
     id String @id @default(cuid())
+    link String @unique
+    slug String @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 // Necessary for Next auth
