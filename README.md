@@ -15,6 +15,7 @@ a simple link shortner made by mjn
   - [ ] refactor error handeling
   - [ ] customize toast
   - [ ] admin panel
+  - [ ] vercel caching
 
 ## Why are there `.js` files in here?
 
