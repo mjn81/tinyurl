@@ -1,12 +1,12 @@
-import { SimpleBox } from 'components';
-import { Button } from 'components/Button';
+import React, { useEffect, useState, KeyboardEvent } from 'react';
+import { SimpleBox, Button } from 'components';
 import { CopyIcon, LoadingIcon, ShortenLinkIcon } from 'icons';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import React, { useEffect, useState, KeyboardEvent } from 'react';
 import { trpc } from 'utils/trpc';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
+import { Motion, spring } from 'react-motion';
 
 const Home: NextPage = () => {
 	const [shorted, setShorted] = useState<string>('');
@@ -33,7 +33,9 @@ const Home: NextPage = () => {
 		}
 		setSubmitting(true);
 		mutateAsync({ url: link }).finally(() => setSubmitting(false));
+		
 	};
+
 	const handleEnter = (e: KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			handleSubmit();
@@ -46,7 +48,7 @@ const Home: NextPage = () => {
 				<meta name="description" content="shorten your link pretty easily" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<main className="space-y-8 flex-col flex justify-center items-center w-screen h-screen text-secondary bg-primary">
+			<main className="px-4 space-y-8 flex-col flex justify-center items-center w-screen h-screen text-secondary bg-primary">
 				<h1 className="text-text text-6xl capitalize">Tiny url</h1>
 				<SimpleBox>
 					<input
@@ -68,27 +70,35 @@ const Home: NextPage = () => {
 						{submitting ? <LoadingIcon /> : <ShortenLinkIcon />}
 					</Button>
 				</SimpleBox>
-				{shorted && (
-					<SimpleBox>
-						<Link
-							href={`${baseUrl}/${shorted}`}
-							target="_blank"
-							rel="noreferrer"
+
+				<Motion style={{ height: spring(shorted ? 56 : 0) }}>
+					{({ height }) => (
+						<div
+							className="overflow-hidden max-w-[600px] w-full"
+							style={{ height: height }}
 						>
-							<p className="text-text py-4 px-3 underline cursor-pointer">
-								{baseUrl}/{shorted}
-							</p>
-						</Link>
-						<span className='grow'></span>
-						<Button
-							onClick={() =>
-								navigator.clipboard.writeText(`${baseUrl}/${shorted}`)
-							}
-						>
-							<CopyIcon />
-						</Button>
-					</SimpleBox>
-				)}
+							<SimpleBox>
+								<Link
+									href={`${baseUrl}/${shorted}`}
+									target="_blank"
+									rel="noreferrer"
+								>
+									<p className="text-text py-4 px-3 underline cursor-pointer">
+										{baseUrl}/{shorted}
+									</p>
+								</Link>
+								<span className="grow"></span>
+								<Button
+									onClick={() =>
+										navigator.clipboard.writeText(`${baseUrl}/${shorted}`)
+									}
+								>
+									<CopyIcon />
+								</Button>
+							</SimpleBox>
+						</div>
+					)}
+				</Motion>
 			</main>
 		</>
 	);
